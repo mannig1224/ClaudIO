@@ -1,0 +1,212 @@
+/* General Reset */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #ffffff;
+  color: #ffffff;
+  height: 100%;
+  overflow-y: auto;
+}
+
+
+/* Main Content with Radial Gradient */
+.main-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 550px; /* Full viewport height */
+  background: radial-gradient(circle, rgb(149, 177, 253) 0%, rgba(30,64,123,1) 85%);
+  z-index: 0;
+}
+
+/* Navbar */
+.navbar {
+  width: 100%; /* Full width of the container */
+  display: flex;
+  justify-content: space-between; /* Space between title and menu */
+  align-items: center;
+  padding: 10px 20px; /* Padding for spacing */
+  background-color: rgb(30, 64, 123, 0.8); /* Match the outer edge of the gradient */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for depth */
+  position: fixed; /* Fix the navbar at the top */
+  top: 0;
+  z-index: 10; /* Ensure it's above other content */
+}
+
+/* App Title */
+.app-title {
+  font-size: 24px; 
+  font-weight: 300; /* Light font weight for elegance */
+  color: #ffffff; /* White text for contrast */
+  margin: 0;
+  letter-spacing: 1px; /* Slight letter spacing for style */
+  font-family: 'Roboto', sans-serif; /* Modern font */
+}
+
+/* Hamburger Menu */
+.hamburger-menu {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 25px;
+  height: 20px;
+  margin-right: 50px;
+  cursor: pointer;
+}
+
+.hamburger-menu div {
+  width: 100%;
+  height: 3px;
+  background-color: #ffffff; /* White color to match title */
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Hover Effect for Hamburger */
+.hamburger-menu:hover div {
+  background-color: rgba(255, 255, 255, 0.8); /* Slightly lighter on hover */
+}
+
+
+
+.broadcast-section {
+  position: absolute; /* Position it absolutely within its container */
+  top: 55%;
+  left: 50%; /* Center it horizontally */
+  transform: translateX(-50%); /* Adjust for centering */
+  width: 300px; /* Fixed width for consistency */
+  text-align: center;
+  color: rgb(255, 255, 255); 
+}
+
+/* Input Sections */
+.ip-section,
+.port-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+/* Section Title */
+.broadcast-section h2 {
+  margin-bottom: 12px; 
+  font-size: 16px; 
+  font-weight: bold;
+  color: #ffffff; 
+  
+}
+
+/* Modernized Input Styles */
+.broadcast-section input {
+  width: 50%; /* Full-width */
+  max-width: 280px; /* Restrict input width */
+  padding: 8px 5px; /* Add padding */
+  margin: 10px 0;
+  font-size: 14px;
+  border: none; /* Remove all borders */
+  border-bottom: 2px solid #ffffff; /* White bottom border */
+  background-color: rgba(255, 255, 255, 0.2); /* Light transparent background */
+  color: #ffffff; /* White text for contrast */
+  transition: all 0.3s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4); /* Add shadow to text */
+}
+
+/* Placeholder Text */
+.broadcast-section input::placeholder {
+  color: rgba(255, 255, 255, 0.7); /* Faded white placeholder */
+  text-shadow: none; /* No shadow for placeholder */
+}
+
+/* Focus Style */
+.broadcast-section input:focus {
+  outline: none; /* Remove default focus outline */
+  border-bottom-color: #1E407B; /* Change bottom border to theme color on focus */
+  background-color: rgba(255, 255, 255, 0.3); /* Slightly lighter background */
+}
+
+/* Input Labels */
+.broadcast-section label {
+  font-size: 12px;
+  color: #ffffff; /* White label for visibility */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* Subtle shadow for labels */
+  margin-bottom: 5px;
+  display: block;
+}
+
+
+/* Visualizer Container */
+.visualizer-container {
+  position: relative; /* Position relative to center the button */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%; /* Full width */
+  height: 100%; /* Adjust height based on design */
+}
+/* Audio Visualizer */
+#audio-visualizer {
+  position: absolute; /* Ensure it stays in the container */
+  top: 50%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%); /* Align the center */
+  width: 80%; /* Match the desired width */
+  height: 80%; 
+  z-index: 0; /* Behind the play button */
+  background-color: transparent; /* No background */
+}
+
+/* Visualizer Container */
+.visualizer-container {
+  position: relative; /* Relative positioning for alignment */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 400px; /* Adjust based on your design */
+  overflow: hidden; /* Prevent visual overflow */
+}
+
+/* Play-Pause Button */
+.play-button {
+  position: absolute; /* Absolute to center over the visualizer */
+  top: 45%; /* Center vertically */
+  left: 50%; /* Center horizontally */
+  transform: translate(-50%, -50%) scale(1); /* Align the center and set initial scale */
+  width: 80px; /* Circular size */
+  height: 80px;
+  border: 2px solid rgba(255, 255, 255, 1); /* Solid white border */
+  border-radius: 50%; /* Make it circular */
+  background-color: rgba(255, 255, 255, 0.5); /* Faded white background */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+/* Play Icon */
+.play-button::before {
+  content: "▶"; /* Play icon */
+  font-size: 32px;
+  color: rgb(30, 64, 123); /* Dark blue text for contrast */
+  font-family: Arial, sans-serif; /* Modern font */
+}
+
+/* Pause State */
+.play-button.paused::before {
+  content: "❚❚"; /* Pause icon */
+}
+
+/* Hover Effect */
+.play-button:hover {
+  background-color: rgba(255, 255, 255, 1); /* Fully opaque on hover */
+  transform: translate(-50%, -50%) scale(1.1); /* Enlarge while keeping it centered */
+}
+
+.play-button:active {
+  transform: translate(-50%, -50%) scale(0.95); /* Slightly shrink while clicked */
+}
+

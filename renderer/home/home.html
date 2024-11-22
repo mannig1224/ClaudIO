@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClaudIO Broadcaster</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body>
+
+      <!-- Navbar -->
+      <nav class="navbar">
+        <h1 class="app-title">Claud.IO</h1>
+        <!-- Hamburger Menu -->
+        <div class="hamburger-menu">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </nav>
+  <!-- Main Content -->
+  <div class="main-container">
+    <!-- Visualizer Container -->
+    <div class="visualizer-container">
+      <canvas id="audio-visualizer"></canvas>
+      <button id="play-pause" class="play-button"></button>
+
+      <div class="broadcast-section">
+        <h2>Broadcast To:</h2>
+        
+        <div class="ip-section">
+          <label for="ip">Target IP:</label>
+          <input type="text" id="ip" placeholder="Enter IP address" value="172.17.3.255">
+        </div>
+        
+        <div class="port-section">
+          <label for="port">Target Port:</label>
+          <input type="number" id="port" placeholder="Enter port" value="5555">
+        </div>
+        </div> 
+    </div>
+
+      <!-- Broadcast Section -->
+    
+
+
+</div>
+  <script src="home.js"></script>
+</body>
+</html>
