@@ -1,37 +1,23 @@
 const { spawn } = require("child_process");
 const ffmpegPath = require("ffmpeg-static");
-const fs = require("fs");
-const path = require("path");
+
 
 class UdpBroadcast {
-  constructor(broadcastIp = "172.17.3.255", port = 5555) {
+  constructor(broadcastIp = "172.17.3.255", port = 4455) {
     this.broadcastIp = broadcastIp;
     this.port = port;
     this.ffmpegProcess = null;
     
   }
 
-  // // Generate the SDP file needed for receivers to interpret the stream
-  // generateSdpFile() {
-  //   const sdpContent = `
-  // v=0
-  // o=- 0 0 IN IP4 ${this.broadcastIp}
-  // s=Audio Broadcast
-  // c=IN IP4 ${this.broadcastIp}
-  // t=0 0
-  // m=audio ${this.port} RTP/AVP 9
-  // b=AS:128
-  // a=rtpmap:9 G722/16000/1
-  // `.trim();
-  //   fs.writeFileSync(this.sdpFilePath, sdpContent);
-  //   console.log(`Generated SDP file at ${this.sdpFilePath}:\n${sdpContent}`);
-  // }
-  
 
   startBroadcast(filePath) {
-    // Generate SDP file before starting the broadcast
-    // this.generateSdpFile();
-
+    let isBroadcasting = false;
+    
+    if (isBroadcasting) {
+      console.log("Broadcast is already running.");
+      return;
+    }
     console.log(`Starting RTP over UDP broadcast for ${filePath} to ${this.broadcastIp}:${this.port}`);
 
     this.ffmpegProcess = spawn(ffmpegPath, [
@@ -43,7 +29,10 @@ class UdpBroadcast {
       "-f", "rtp",            // RTP output format
       `udp://${this.broadcastIp}:${this.port}`, // Broadcast address for RTP over UDP
     ]);
-
+    isBroadcasting = true; // Mark broadcast as active
+    this.ffmpegProcess.on("close", () => {
+      isBroadcasting = false; // Reset state when process exits
+    });
     // Capture FFmpeg stdout and stderr for debugging
     this.ffmpegProcess.stdout.on("data", (data) => console.log(`ffmpeg output: ${data}`));
     this.ffmpegProcess.stderr.on("data", (data) => {
@@ -67,11 +56,13 @@ class UdpBroadcast {
 
   stopBroadcast() {
     if (this.ffmpegProcess) {
-      console.log("Stopping RTP broadcast.");
-      this.ffmpegProcess.kill("SIGINT");
-      this.ffmpegProcess = null;
+      console.log("Stopping broadcast...");
+      this.ffmpegProcess.kill(); // Kill the FFmpeg process
+      this.ffmpegProcess = null; // Clear the reference to the process
+    } else {
+      console.error("No active broadcast to stop.");
     }
   }
-}
+}  
 
 module.exports = UdpBroadcast;

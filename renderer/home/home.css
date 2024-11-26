@@ -16,7 +16,7 @@ body, html {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 550px; /* Full viewport height */
+  height: 100vh; /* Full viewport height */
   background: radial-gradient(circle, rgb(149, 177, 253) 0%, rgba(30,64,123,1) 85%);
   z-index: 0;
 }
@@ -72,11 +72,11 @@ body, html {
 
 
 .broadcast-section {
-  position: absolute; /* Position it absolutely within its container */
-  top: 55%;
-  left: 50%; /* Center it horizontally */
-  transform: translateX(-50%); /* Adjust for centering */
-  width: 300px; /* Fixed width for consistency */
+  position: absolute;
+  top: 80%;
+  left: 50%; 
+  transform: translateX(-50%); 
+  width: 300px; 
   text-align: center;
   color: rgb(255, 255, 255); 
 }
@@ -166,13 +166,13 @@ body, html {
   align-items: center;
   width: 100%;
   height: 400px; /* Adjust based on your design */
-  overflow: hidden; /* Prevent visual overflow */
+  
 }
 
 /* Play-Pause Button */
 .play-button {
   position: absolute; /* Absolute to center over the visualizer */
-  top: 45%; /* Center vertically */
+  top: 40%; /* Center vertically */
   left: 50%; /* Center horizontally */
   transform: translate(-50%, -50%) scale(1); /* Align the center and set initial scale */
   width: 80px; /* Circular size */
@@ -195,9 +195,11 @@ body, html {
   font-family: Arial, sans-serif; /* Modern font */
 }
 
-/* Pause State */
+/* Stop State */
 .play-button.paused::before {
-  content: "❚❚"; /* Pause icon */
+  content: "■"; /* Stop icon */
+  font-size: 64px;
+  margin-bottom: 10px;
 }
 
 /* Hover Effect */
@@ -210,3 +212,99 @@ body, html {
   transform: translate(-50%, -50%) scale(0.95); /* Slightly shrink while clicked */
 }
 
+/* General Container */
+.audio-source-container {
+  position: absolute;
+  top: 10%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Title */
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  color: rgb(255, 255, 255); /* Theme color */
+  margin-bottom: 20px;
+}
+
+/* Source Options */
+.source-options {
+  display: flex;
+  justify-content: center;
+  gap: 15px; 
+  width: 100%;
+}
+
+/* Source Card Button */
+.source-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 85px; 
+  height: 60px; 
+  background: linear-gradient(160deg, #ffffff 70%, #e0e0e0 ); 
+  border-radius: 15px; 
+  
+  border: 3px solid rgba(255, 255, 255, 0.2); 
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease; 
+}
+
+/* Hover Effect */
+.source-card:hover {
+  transform: scale(1.05); 
+  
+}
+
+.source-icon {
+  font-size: 16px; 
+  color: rgb(30, 64, 123); 
+  margin-bottom: 5px;
+  
+}
+
+/* Label */
+.source-card span {
+  font-size: 14px; 
+  font-weight: bold;
+  color: rgb(30, 64, 123);
+}
+
+.now-streaming {
+  display: flex;
+  position: absolute;
+  top: 55%;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center-align text and elements */
+  background-color: #32ffc8ae; /* Spotify-like green background */
+  color: white; /* White text for contrast */
+  padding: 10px 15px; /* Add some padding for spacing */
+  border-radius: 10px; /* Rounded edges for a modern look */
+  font-family: Arial, sans-serif; /* Use a clean font */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+}
+
+.now-streaming p {
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove padding */
+  font-size: 14px; /* Adjust font size */
+  line-height: 1.2; /* Reduce line spacing for tight fit */
+  text-align: center; /* Center-align text */
+}
+
+.now-streaming p:first-child {
+  font-weight: bold; /* Emphasize the "Now Streaming" text */
+  font-size: 16px; /* Slightly larger font size */
+}
+
+.now-streaming p:last-child {
+  font-style: italic; /* Italicize the song or content name */
+}

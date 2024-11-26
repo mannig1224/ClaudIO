@@ -1,20 +1,41 @@
-const audioElement = new Audio("../../assets/Animal_I_Have_Become_1716571270259703154.wav");
-
-// Variables for audio context and visualizer
+// =========================
+// Global Variables
+// =========================
 let audioContext, analyser, dataArray, animationId;
+let isPlaying = false; // Play-pause state
+const playPauseButton = document.getElementById("play-pause");
+const nowStreamingSection = document.getElementById("now-streaming");
+const fileButton = document.getElementById("file-button");
+const computerButton = document.getElementById("computer-button");
 
-// Get the canvas and context for rendering the visualizer
+// Canvas and Context for Visualizer
 const canvas = document.getElementById("audio-visualizer");
 const ctx = canvas.getContext("2d");
 
-// Dynamically resize the canvas to match its CSS dimensions
+// =========================
+// Utility Functions
+// =========================
+
+/**
+ * Dynamically resize the canvas to match its CSS dimensions.
+ */
 const resizeCanvas = () => {
   const { width, height } = canvas.getBoundingClientRect();
   canvas.width = width;
   canvas.height = height;
 };
-
 resizeCanvas(); // Call on initialization
+
+/**
+ * Create and initialize the audio element with the default source.
+ */
+const initializeAudioElement = () => {
+  const defaultAudioPath = "../../assets/Animal_I_Have_Become_1716571270259703154.wav";
+  const audioPath = selectedFilePath ? `file://${selectedFilePath}` : defaultAudioPath;
+
+  audioElement = new Audio(audioPath); // Use selected file or default
+  audioElement.currentTime = 0; // Start at the beginning
+};
 
 /**
  * Set up the audio context and connect the audio element to an analyser node.
@@ -24,11 +45,10 @@ const setupAudioContext = () => {
   analyser = audioContext.createAnalyser();
   analyser.fftSize = 256; // Defines the resolution of frequency data
 
-  // Create a data array to hold frequency data
   const bufferLength = analyser.frequencyBinCount;
   dataArray = new Uint8Array(bufferLength);
 
-  // Connect the audio element to the analyser node and audio destination
+  // Connect the audio element to the analyser and the audio destination
   const source = audioContext.createMediaElementSource(audioElement);
   source.connect(analyser);
   analyser.connect(audioContext.destination);
@@ -76,11 +96,8 @@ const visualizeAudio = () => {
   const drawDynamicVisualizer = () => {
     animationId = requestAnimationFrame(drawDynamicVisualizer);
 
-    // Fetch the frequency data
     analyser.getByteFrequencyData(dataArray);
-
-    // Clear the canvas for new frame
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
+    ctx.clearRect(0, 0, WIDTH, HEIGHT); // Clear the canvas for the new frame
 
     const barCount = Math.floor(WIDTH / (BAR_WIDTH + BAR_SPACING));
     const scaledData = dataArray.slice(0, barCount);
@@ -106,19 +123,18 @@ const visualizeAudio = () => {
   };
 
   drawStaticVisualizer(); // Always show static squares
-
   if (audioContext && audioContext.state === "running") {
     drawDynamicVisualizer(); // Start dynamic visualization if audio is playing
   }
 };
 
-// Render static visualizer initially
-visualizeAudio();
+// =========================
+// Button Handlers
+// =========================
 
-// Play-pause button logic
-const playPauseButton = document.getElementById("play-pause");
-let isPlaying = false;
-
+/**
+ * Handles the Play/Pause button click.
+ */
 playPauseButton.addEventListener("click", async () => {
   const ip = document.getElementById("ip").value;
   const port = parseInt(document.getElementById("port").value, 10);
@@ -129,40 +145,95 @@ playPauseButton.addEventListener("click", async () => {
   }
 
   if (isPlaying) {
-    // Stop audio playback and visualizer
-    await window.api.stopBroadcast();
-    audioElement.pause();
-    console.log("Audio playback stopped.");
-
-    if (animationId) cancelAnimationFrame(animationId);
-    if (audioContext) {
-      audioContext.close();
-      audioContext = null;
-    }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    playPauseButton.classList.remove("paused");
-  } else {
-    // Start audio playback and visualizer
-    await window.api.startBroadcast({ ip, port });
-
+    // Stop audio playback and broadcast
     try {
-      audioElement.currentTime = 0;
-      await audioElement.play();
-      console.log("Audio playback started.");
+      audioElement.pause();
+      audioElement.currentTime = 0; // Reset audio to the start
 
-      if (!audioContext) {
-        setupAudioContext();
-        visualizeAudio();
-      } else if (audioContext.state === "suspended") {
-        audioContext.resume();
+      if (audioContext && audioContext.state === "running") {
+        await audioContext.close(); // Close the audio context
       }
+
+      if (animationId) {
+        cancelAnimationFrame(animationId); // Stop the animation loop
+        animationId = null;
+      }
+
+      if (window.api.pauseBroadcast) {
+        await window.api.stopBroadcast();
+        console.log("Broadcast stopped.");
+      }
+
+      playPauseButton.classList.remove("paused");
+      console.log("Playback and broadcast stopped.");
     } catch (error) {
-      console.error("Error playing audio:", error);
+      console.error("Error stopping playback or broadcast:", error);
     }
 
-    playPauseButton.classList.add("paused");
-  }
+    isPlaying = false;
+  } else {
+    // Start audio playback and broadcast
+    try {
+      initializeAudioElement(); // Reset audio element
+      console.log("This is what we are trying to push to startBroadcast: ", selectedFilePath)
+      await window.api.startBroadcast({ ip, port, filePath: selectedFilePath, });
+      console.log("Broadcast started.");
 
-  isPlaying = !isPlaying; // Toggle play state
+      setupAudioContext(); // Reinitialize the audio context
+      visualizeAudio(); // Restart the visualizer
+
+      audioElement.currentTime = 0; // Reset audio to the start
+      await audioElement.play();
+
+      playPauseButton.classList.add("paused");
+      console.log("Playback and broadcast started.");
+    } catch (error) {
+      console.error("Error starting playback or broadcast:", error);
+    }
+
+    isPlaying = true;
+  }
 });
+/**
+ * Handles the File button click.
+ */
+fileButton.addEventListener("click", async () => {
+  const filePath = await window.api.selectAudioFile();
+
+  if (filePath) {
+    selectedFilePath = filePath; // Save the selected file path globally
+    const fileName = filePath.split("\\").pop(); // Extract file name for display
+
+    nowStreamingSection.innerHTML = `
+      <p>Now Playing:</p>
+      <p>${fileName}</p>
+    `;
+
+    console.log("Selected file:", filePath);
+
+    // Dynamically set the new audio source
+    audioElement.src = `file://${filePath}`;
+    audioElement.load(); // Reload the audio element with the new file
+  } else {
+    console.log("File selection canceled.");
+  }
+});
+
+
+/**
+ * Handles the computer button click.
+ */
+computerButton.addEventListener("click", async () => {
+  try {
+    await window.api.openAudioSourcesWindow(); // Call the IPC handler
+    console.log("Audio sources window opened successfully.");
+  } catch (error) {
+    console.error("Error opening audio sources window:", error);
+  }
+});
+
+
+// =========================
+// Initialize Visualizer
+// =========================
+visualizeAudio();
